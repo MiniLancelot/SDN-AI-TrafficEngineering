@@ -9,20 +9,50 @@
 git clone <repo-url>
 cd SDN-AI-TrafficEngineering
 
-# 2. Check system
-chmod +x check_system.sh start.sh
-./check_system.sh
+# 2. Check Python version (QUAN TRỌNG!)
+python3 --version
 
-# 3. Install
+# 3. Install system packages
 sudo apt-get update
-sudo apt-get install -y python3 python3-pip mininet openvswitch-switch
-pip3 install -r requirements.txt
+sudo apt-get install -y mininet openvswitch-switch
 
-# 4. Run
+# 4. Install build dependencies for Python (QUAN TRỌNG!)
+sudo apt-get install -y build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev curl \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev \
+    libxmlsec1-dev libffi-dev liblzma-dev
+
+# 5. Install pyenv (RECOMMENDED)
+curl https://pyenv.run | bash
+
+# Configure pyenv (QUAN TRỌNG!)
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Add to bashrc for next time
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+
+# 5. Install Python 3.11 via pyenv
+pyenv install 3.11.9
+cd SDN-AI-TrafficEngineering
+echo "3.11.9" > .python-version  # Set Python version for this directory
+
+# 7. Setup Python environment
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 8. Run
 ./start.sh setup      # Lần đầu tiên
 ./start.sh controller # Terminal 1
 ./start.sh mininet    # Terminal 2 (sử dụng sudo)
 ```
+
+**⚠️ RYU COMPATIBILITY**: Project dùng Ryu fork (faucetsdn) vì official Ryu có issues với setuptools mới.
 
 **✅ Đây là cách KHUYẾN NGHỊ nhất!**
 
@@ -52,12 +82,24 @@ cd SDN-AI-TrafficEngineering
 chmod +x check_system.sh start.sh
 ./check_system.sh
 
-# 6. Install
+# 6. Install system packages
 sudo apt-get update
-sudo apt-get install -y python3 python3-pip mininet openvswitch-switch
-pip3 install -r requirements.txt
+sudo apt-get install -y mininet openvswitch-switch build-essential
 
-# 7. Run (TẤT CẢ trong Ubuntu WSL)
+# 7. Install pyenv and Python 3.11
+curl https://pyenv.run | bash
+exec $SHELL
+pyenv install 3.11.9
+cd SDN-AI-TrafficEngineering
+pyenv local 3.11.9
+
+# 8. Setup Python (QUAN TRỌNG - fix Python 3.13 issue)
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 8. Run (TẤT CẢ trong Ubuntu WSL)
 ./start.sh setup
 ./start.sh controller
 # Mở terminal WSL mới:
@@ -108,11 +150,46 @@ which python3
 
 ## ❓ FAQs
 
+### Q: Lỗi "AttributeError: 'types.SimpleNamespace' object has no attribute 'get_script_args'"?
+**A**: Lỗi Ryu với setuptools mới. Requirements.txt đã dùng Ryu fork để fix. Nếu vẫn lỗi:
+```bash
+# Upgrade pip and setuptools
+pip install --upgrade pip setuptools wheel
+
+# Install Ryu fork directly
+pip install git+https://github.com/faucetsdn/ryu.git@master
+
+# Then install other packages
+grep -v "^git+" requirements.txt | grep -v "^#" | pip install -r /dev/stdin
+```
+
 ### Q: Tôi đang dùng Windows, có chạy được không?
 **A**: CÓ, nhưng PHẢI cài WSL2 với Ubuntu. Không thể chạy native trên Windows.
 
 ### Q: Kali Linux có tốt hơn Ubuntu không?
 **A**: Kali và Ubuntu đều TỐT NHẤT. Performance tương đương.
+
+### Q: Lỗi "ModuleNotFoundError: No module named '_bz2'" hoặc "Missing the OpenSSL lib"?
+**A**: Thiếu build dependencies. Cài trước khi build Python:
+```bash
+sudo apt-get install -y build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev curl \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev \
+    libxmlsec1-dev libffi-dev liblzma-dev
+# Sau đó: pyenv install 3.11.9
+```
+
+### Q: Lỗi "pyenv: no such command `local'"?
+**A**: Pyenv chưa được load. Chạy:
+```bash
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+# Sau đó thử lại: echo "3.11.9" > .python-version
+```
+
+### Q: Python 3.13 có chạy được không?
+**A**: CÓ! Project đã dùng Ryu fork (faucetsdn) trong requirements.txt. Python 3.11-3.13 đều OK.
 
 ### Q: Tôi có thể dev trên Windows IDE và run trên WSL2?
 **A**: CÓ! VS Code có extension WSL rất tốt. PyCharm Professional cũng support.

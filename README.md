@@ -9,6 +9,12 @@ Dự án ứng dụng AI để tối ưu hóa định tuyến và quản lý tra
 
 ## 🚀 Quick Start
 
+### ⚠️ Python 3.13 Issue?
+**Lỗi khi `pip install`?** → Xem [PYTHON_FIX.md](PYTHON_FIX.md) hoặc chạy:
+```bash
+./fix_python.sh
+```
+
 ### 📖 Hướng dẫn theo Platform:
 - 🐧 **Linux (Kali/Ubuntu)**: Xem [QUICK_START.md](QUICK_START.md) ← **KHUYẾN NGHỊ**
 - 🪟 **Windows (WSL2)**: Xem [QUICK_START.md](QUICK_START.md) 
@@ -18,7 +24,10 @@ Dự án ứng dụng AI để tối ưu hóa định tuyến và quản lý tra
 ```bash
 git clone <repo-url>
 cd SDN-AI-TrafficEngineering
-./check_system.sh          # Kiểm tra system
+chmod +x fix_python.sh check_system.sh start.sh
+./fix_python.sh             # Fix Python 3.13 (nếu cần)
+./check_system.sh           # Kiểm tra system
+source venv/bin/activate    # Activate environment
 ./start.sh setup            # Cài đặt
 ./start.sh controller       # Chạy controller
 ```

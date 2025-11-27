@@ -2,6 +2,12 @@
 
 ## 🎯 Chọn tài liệu phù hợp với bạn
 
+### ⚠️ Gặp lỗi Python 3.13?
+👉 **[PYTHON_FIX.md](PYTHON_FIX.md)** hoặc chạy `./fix_python.sh`
+- 🔧 Lỗi: AttributeError khi pip install
+- 🔧 Fix tự động trong 5 phút
+- 🔧 Script ready-to-use
+
 ### 1️⃣ Bạn muốn biết: "Code chạy trên OS gì?"
 👉 **[PLATFORM_COMPATIBILITY.md](PLATFORM_COMPATIBILITY.md)**
 - ✅ Kali Linux có chạy được không?

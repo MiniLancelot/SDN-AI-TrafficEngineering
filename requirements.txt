@@ -1,5 +1,7 @@
 # SDN Controller
-ryu>=4.34
+# Note: Official Ryu 4.34 has compatibility issues with newer setuptools
+# Using faucetsdn fork which has fixes
+git+https://github.com/faucetsdn/ryu.git@master
 
 # Deep Learning & AI
 torch>=1.12.0
