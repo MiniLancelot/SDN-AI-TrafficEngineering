@@ -1,7 +1,8 @@
 # SDN Controller
-# Note: Official Ryu 4.34 has compatibility issues with newer setuptools
-# Using faucetsdn fork which has fixes
-git+https://github.com/faucetsdn/ryu.git@master
+# Note: Ryu has setuptools compatibility issues
+# Install manually first: pip install --no-build-isolation ryu
+# Or comment out below and install other packages first
+# ryu>=4.34
 
 # Deep Learning & AI
 torch>=1.12.0

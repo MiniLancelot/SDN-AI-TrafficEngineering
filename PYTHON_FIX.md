@@ -12,23 +12,29 @@ AttributeError: 'types.SimpleNamespace' object has no attribute 'get_script_args
 
 ## ✅ Solution - Quick Fix (2 minutes)
 
-### Option A: Use Ryu Fork (RECOMMENDED - FASTEST)
+### Working Solution: Install Ryu with old setuptools
 
 ```bash
 # Activate venv
 source venv/bin/activate
 
-# Upgrade pip
-pip install --upgrade pip setuptools wheel
+# Step 1: Install old setuptools
+pip install setuptools==58.0.4
 
-# Install from requirements.txt (already uses Ryu fork)
-pip install -r requirements.txt
+# Step 2: Install Ryu WITHOUT build isolation (CRITICAL!)
+pip install --no-build-isolation ryu
+
+# Step 3: Upgrade setuptools and install other packages
+pip install --upgrade pip setuptools wheel
+grep -v "ryu" requirements.txt | grep -v "^#" | grep -v "^$" | pip install -r /dev/stdin
 
 # Verify
-python -c "import ryu; print('Ryu OK!')"
+python -c "import ryu; print(f'Ryu {ryu.__version__} OK!')"
 ```
 
-**✅ Xong! Requirements.txt đã dùng faucetsdn/ryu fork.**
+**✅ This works with Python 3.11, 3.12, and 3.13!**
+
+**🔑 Key: `--no-build-isolation` flag prevents pip from creating isolated build environment with new setuptools**
 
 ---
 

@@ -43,8 +43,14 @@ echo "3.11.9" > .python-version  # Set Python version for this directory
 # 7. Setup Python environment
 python -m venv venv
 source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+
+# IMPORTANT: Install Ryu with old setuptools (bypass build isolation)
+pip install setuptools==58.0.4
+pip install --no-build-isolation ryu
+
+# Then upgrade setuptools and install other packages
+pip install --upgrade pip setuptools wheel
+grep -v "ryu" requirements.txt | grep -v "^#" | grep -v "^$" | pip install -r /dev/stdin
 
 # 8. Run
 ./start.sh setup      # Lần đầu tiên
@@ -151,16 +157,17 @@ which python3
 ## ❓ FAQs
 
 ### Q: Lỗi "AttributeError: 'types.SimpleNamespace' object has no attribute 'get_script_args'"?
-**A**: Lỗi Ryu với setuptools mới. Requirements.txt đã dùng Ryu fork để fix. Nếu vẫn lỗi:
+**A**: Lỗi Ryu với setuptools mới. Fix:
 ```bash
-# Upgrade pip and setuptools
-pip install --upgrade pip setuptools wheel
+source venv/bin/activate
 
-# Install Ryu fork directly
-pip install git+https://github.com/faucetsdn/ryu.git@master
+# Install Ryu with old setuptools (MUST use --no-build-isolation)
+pip install setuptools==58.0.4
+pip install --no-build-isolation ryu
 
-# Then install other packages
-grep -v "^git+" requirements.txt | grep -v "^#" | pip install -r /dev/stdin
+# Then upgrade and install rest
+pip install --upgrade setuptools
+grep -v "ryu" requirements.txt | grep -v "^#" | pip install -r /dev/stdin
 ```
 
 ### Q: Tôi đang dùng Windows, có chạy được không?

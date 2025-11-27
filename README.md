@@ -12,7 +12,11 @@ Dự án ứng dụng AI để tối ưu hóa định tuyến và quản lý tra
 ### ⚠️ Python 3.13 Issue?
 **Lỗi khi `pip install`?** → Xem [PYTHON_FIX.md](PYTHON_FIX.md) hoặc chạy:
 ```bash
-./fix_python.sh
+# Install Ryu with old setuptools (fix compatibility)
+pip install setuptools==58.0.4
+pip install --no-build-isolation ryu
+pip install --upgrade setuptools
+grep -v "ryu" requirements.txt | pip install -r /dev/stdin
 ```
 
 ### 📖 Hướng dẫn theo Platform:
